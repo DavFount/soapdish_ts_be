@@ -1,7 +1,7 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response } from 'express';
 
 export const defaultRoute = Router();
 
-defaultRoute.get("/", (req: Request, res: Response) => {
-  res.send("Welcome to the Soap Dish API!");
+defaultRoute.get('/', async (req: Request, res: Response) => {
+  res.send('Welcome to the SOAP Dish API!');
 });

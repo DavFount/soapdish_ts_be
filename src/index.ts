@@ -1,8 +1,8 @@
-import express, { Express, Request, Response, Application } from "express";
 import dotenv from "dotenv";
-import { routes } from "./routes/index";
+dotenv.config({ path: __dirname + "/../.env" });
 
-dotenv.config();
+import express, { Application } from "express";
+import { routes } from "./routes/index";
 
 const app: Application = express();
 const port = process.env.PORT || 8000;
