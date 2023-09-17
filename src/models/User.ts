@@ -1,10 +1,11 @@
-import { createConnection, ConnectOptions, Model, Schema, model } from "mongoose";
-import { ITeam } from "./Team";
+import { createConnection, ConnectOptions, Model, Schema } from "mongoose";
+import { ITeam } from "#models/Team";
 import bcrypt from "bcrypt";
 import { toLower } from "lodash";
-import { justNumericCharacters } from "../utils";
+import { justNumericCharacters } from "#utils/db.util";
 import Validator from "validatorjs";
 import { config } from "#configs/index";
+import jwt from "jsonwebtoken";
 
 const connectionOptions: ConnectOptions = {
   bufferCommands: false,
@@ -30,12 +31,15 @@ export interface IUser {
   };
   prayers?: Array<string>;
   teams: Array<ITeam>;
+  emailVerified?: boolean;
 }
 
 interface IUserMethods {
-  validPassword(): boolean;
+  validPassword(password: string): boolean;
+  generateRefreshToken(): string;
+  generateAccessToken(): string;
 }
-interface UserModel extends Model<IUser> {
+interface UserModel extends Model<IUser, {}, IUserMethods> {
   generateHash(password: string): string;
   createValidator(data: Object): Validator.Validator<IUser>;
 }
@@ -57,8 +61,9 @@ const UserSchema = new Schema<IUser, UserModel, IUserMethods>(
       instagram: { type: String, required: false },
       linkedin: { type: String, required: false },
     },
-    teams: [{ type: Schema.Types.ObjectId, ref: "Team" }],
     prayers: [{ type: String, required: false }],
+    teams: [{ type: Schema.Types.ObjectId, ref: "Team" }],
+    emailVerified: { type: Boolean, required: false, default: false },
   },
   { timestamps: true }
 );
@@ -78,8 +83,12 @@ UserSchema.statics.createValidator = (data: Object) => {
   return new Validator(data, rules);
 };
 
-UserSchema.method("validPassword", function (password: string) {
+UserSchema.methods.validPassword = function (password: string) {
   return bcrypt.compareSync(password, this.password);
+};
+
+UserSchema.method("generateAccessToken", function () {
+  return jwt.sign({ id: this._id }, config.jwt.secret, { expiresIn: config.jwt.accessTokenExpiry });
 });
 
 export const User = connection.model<IUser, UserModel>("User", UserSchema);

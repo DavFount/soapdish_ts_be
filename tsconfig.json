@@ -33,6 +33,7 @@
       "#configs/*": ["src/configs/*"],
       "#models/*": ["src/models/*"],
       "#controllers/*": ["src/controllers/*"],
+      "#middleware/*": ["src/middleware/*"],
       "#services/*": ["src/services/*"],
       "#utils/*": ["src/utils/*"]
     } /* Specify a set of entries that re-map imports to additional lookup locations. */,

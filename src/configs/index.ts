@@ -1,5 +1,14 @@
 export const config = {
   port: process.env.PORT || 8000,
+  app: {
+    url: process.env.APP_URL || "http://localhost:8000",
+  },
+  jwt: {
+    secret: process.env.JWT_SECRET!,
+    refreshSecret: process.env.JWT_REFRESH_SECRET!,
+    accessTokenExpiry: process.env.JWT_ACCESS_TOKEN_EXPIRY!,
+    refreshTokenExpiry: process.env.JWT_REFRESH_TOKEN_EXPIRY!,
+  },
   database: {
     connectionUri: process.env.CONNECTION_URI!,
   },

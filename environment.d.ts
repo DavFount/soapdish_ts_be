@@ -2,6 +2,10 @@ declare global {
   namespace NodeJS {
     interface ProcessEnv {
       PORT: string;
+      JWT_SECRET: string;
+      JWT_REFRESH_SECRET: string;
+      JWT_ACCESS_TOKEN_EXPIRY: string;
+      JWT_REFRESH_TOKEN_EXPIRY: string;
       CONNECTION_URI: string!;
       AWS_ACCESS_KEY_ID: string;
       AWS_SECRET_ACCESS_KEY: string;
