@@ -9,6 +9,8 @@ import { v4 as uuidv4 } from "uuid";
 import SHA256 from "crypto-js/sha256";
 import { MailDataRequired } from "@sendgrid/mail";
 
+// TODO: Add tests for all methods
+// TODO: Add method to reset password
 export class AuthController {
   login = async (req: Request, res: Response) => {
     try {
@@ -17,17 +19,17 @@ export class AuthController {
 
       // User Deoesn't Exist
       if (!user || typeof user === "undefined") {
-        return res.status(404).json({ error: "Invalid Username/Password" });
+        return res.status(401).json({ error: "Invalid Username/Password" });
       }
 
       if (!user!.emailVerified) {
-        return res.status(404).json({ error: "Email not verified" });
+        return res.status(401).json({ error: "Email not verified" });
       }
 
       // User Exists but Password is Invalid
       const validPassword: boolean = user!.validPassword(password);
       if (!validPassword) {
-        return res.status(404).json({ error: "Invalid Username/Password" });
+        return res.status(401).json({ error: "Invalid Username/Password" });
       }
 
       let refreshToken = await RefreshToken.findOne({ user: user!._id });
@@ -42,7 +44,7 @@ export class AuthController {
       return res.status(200).json({
         accessToken: user!.generateAccessToken(),
         refreshToken: refreshToken.refreshToken,
-        user: await User.find({ email: email }, { password: 0, __v: 0 }),
+        user: await User.findOne({ email: email }, { password: 0, __v: 0 }),
       });
     } catch (err) {
       console.error(err);
@@ -198,7 +200,9 @@ export class AuthController {
         return res.status(404).json({ error: "User Not Found" });
       }
 
-      return res.status(200).json(user!.generateAccessToken());
+      return res.status(200).json({
+        accessToken: user!.generateAccessToken(),
+      });
     } catch (err) {
       return res.status(500).json({ error: "Internal Server Error" });
     }
