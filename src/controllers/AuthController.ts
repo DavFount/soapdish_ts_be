@@ -8,6 +8,7 @@ import { config } from "#configs/index";
 import { v4 as uuidv4 } from "uuid";
 import SHA256 from "crypto-js/sha256";
 import { MailDataRequired } from "@sendgrid/mail";
+import { SoapError } from "#utils/errors.util";
 
 // TODO: Add tests for all methods
 // TODO: Add method to reset password
@@ -19,17 +20,29 @@ export class AuthController {
 
       // User Deoesn't Exist
       if (!user || typeof user === "undefined") {
-        return res.status(401).json({ error: "Invalid Username/Password" });
+        throw new SoapError({
+          name: "INVALID_USERNAME_PASSWORD",
+          message: "Invalid Username/Password",
+          status: 401,
+        });
       }
 
       if (!user!.emailVerified) {
-        return res.status(401).json({ error: "Email not verified" });
+        throw new SoapError({
+          name: "EMAIL_NOT_VERIFIED",
+          message: "Email not verified",
+          status: 401,
+        });
       }
 
       // User Exists but Password is Invalid
       const validPassword: boolean = user!.validPassword(password);
       if (!validPassword) {
-        return res.status(401).json({ error: "Invalid Username/Password" });
+        throw new SoapError({
+          name: "INVALID_USERNAME_PASSWORD",
+          message: "Invalid Username/Password",
+          status: 401,
+        });
       }
 
       let refreshToken = await RefreshToken.findOne({ user: user!._id });
@@ -47,8 +60,9 @@ export class AuthController {
         user: await User.findOne({ email: email }, { password: 0, __v: 0 }),
       });
     } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Internal Server Error" });
+      if (err instanceof SoapError) {
+        return res.status(err.status).json({ error: err.message });
+      }
     }
   };
 
@@ -57,14 +71,19 @@ export class AuthController {
       const user: Document<IUser> | null = await User.findOne({ email: req.body.email });
 
       if (!user || typeof user === "undefined") {
-        return res.status(404).json({ error: "User Not Found" });
+        throw new SoapError({
+          name: "USER_NOT_FOUND",
+          message: "User Not Found",
+          status: 404,
+        });
       }
 
       await RefreshToken.deleteOne({ user: user!._id });
       return res.status(200).json({ message: "Log out successful" });
     } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Internal Server Error" });
+      if (err instanceof SoapError) {
+        return res.status(err.status).json({ error: err.message });
+      }
     }
   };
 
@@ -120,18 +139,23 @@ export class AuthController {
       const activation = await Activation.findOne({ verificationToken: req.query.token });
 
       if (!activation) {
-        return res.status(404).json({ error: "Invalid Token" });
+        throw new SoapError({
+          name: "TOKEN_INVALID",
+          message: "Invalid Token",
+          status: 404,
+        });
       }
 
       if (activation.expiresAt < new Date()) {
         await activation.deleteOne();
-        return res.status(404).json({ error: "Token Expired" });
+        throw new SoapError({
+          name: "TOKEN_EXPIRED",
+          message: "Token Expired",
+          status: 404,
+        });
       }
 
       const user = await User.findOne({ _id: activation!.user }, { password: 0, __v: 0 });
-      if (!user) {
-        return res.status(404).json({ error: "User Not Found" });
-      }
 
       user!.emailVerified = true;
       await user!.save();
@@ -140,7 +164,9 @@ export class AuthController {
         message: "Email verified successfully!",
       });
     } catch (err) {
-      return res.status(500).json({ error: "Internal Server Error" });
+      if (err instanceof SoapError) {
+        return res.status(err.status).json({ error: err.message });
+      }
     }
   };
 
@@ -148,11 +174,19 @@ export class AuthController {
     try {
       const user = await User.findOne({ email: req.body.email });
       if (!user) {
-        return res.status(404).json({ error: "User Not Found" });
+        throw new SoapError({
+          name: "USER_NOT_FOUND",
+          message: "User Not Found",
+          status: 404,
+        });
       }
 
       if (user.emailVerified) {
-        return res.status(404).json({ error: "Email Already Verified" });
+        throw new SoapError({
+          name: "EMAIL_ALREADY_VERIFIED",
+          message: "Email Already Verified",
+          status: 401,
+        });
       }
 
       const activation = await Activation.findOne({ user: user._id });
@@ -178,7 +212,9 @@ export class AuthController {
         message: "Verification email sent successfully!",
       });
     } catch (err) {
-      return res.status(500).json({ error: "Internal Server Error" });
+      if (err instanceof SoapError) {
+        return res.status(err.status).json({ error: err.message });
+      }
     }
   };
 
@@ -187,24 +223,31 @@ export class AuthController {
       const { refreshToken } = req.body;
       const refresh = await RefreshToken.findOne({ refreshToken: refreshToken });
       if (!refresh) {
-        return res.status(404).json({ error: "Invalid Refresh Token" });
+        throw new SoapError({
+          name: "REFRESH_TOKEN_INVALID",
+          message: "Invalid Refresh Token",
+          status: 404,
+        });
       }
 
       if (refresh.expiresAt < new Date()) {
         await refresh.deleteOne();
-        return res.status(404).json({ error: "Refresh Token Expired" });
+        throw new SoapError({
+          name: "REFRESH_TOKEN_EXPIRED",
+          message: "Refresh Token Expired",
+          status: 404,
+        });
       }
 
       const user = await User.findOne({ _id: refresh!.user }, { password: 0, __v: 0 });
-      if (!user) {
-        return res.status(404).json({ error: "User Not Found" });
-      }
 
       return res.status(200).json({
         accessToken: user!.generateAccessToken(),
       });
     } catch (err) {
-      return res.status(500).json({ error: "Internal Server Error" });
+      if (err instanceof SoapError) {
+        return res.status(err.status).json({ error: err.message });
+      }
     }
   };
 

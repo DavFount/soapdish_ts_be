@@ -31,12 +31,31 @@ describe("Test Registration", () => {
         details: {
           firstName: "John",
           lastName: "Doe",
+          phone: "(123)456-7890",
         },
       });
 
     expect(res.status).toBe(201);
     expect("message" in res.body).toEqual(true);
     expect(res.body.message).toEqual("User created successfully!");
+  });
+
+  test("Register user that already exists", async () => {
+    const res = await request(app)
+      .post("/register")
+      .send({
+        email: "jdoe@email.com",
+        password: "password",
+        details: {
+          firstName: "John",
+          lastName: "Doe",
+          phone: "(123)456-7890",
+        },
+      });
+
+    expect(res.status).toBe(409);
+    expect("errors" in res.body).toEqual(true);
+    expect(res.body.errors.email).toEqual(["Email already exists!"]);
   });
 });
 
@@ -62,7 +81,56 @@ describe("Test Email Verification is Required", () => {
   });
 });
 
+describe("Test Verification With Expired Token", () => {
+  test("Verify User - Expired Token", async () => {
+    const user = await User.findOne({ email: "jdoe@email.com" });
+    const activation = await Activation.findOne({ user: user!._id });
+    activation!.expiresAt = new Date();
+    activation!.save();
+
+    const res = await request(app).get("/verify").query({
+      token: activation!.verificationToken,
+    });
+    expect(res.status).toBe(404);
+    expect("error" in res.body).toEqual(true);
+    expect(res.body.error).toEqual("Token Expired");
+  });
+});
+
+describe("Test resend activation email", () => {
+  test("Resend Activation Email - (user not found)", async () => {
+    const res = await request(app).post("/resend").send({
+      email: "jane@email.com",
+    });
+    expect(res.status).toBe(404);
+    expect("error" in res.body).toEqual(true);
+    expect(res.body.error).toEqual("User Not Found");
+  });
+
+  test("Resend Activation Email", async () => {
+    await request(app).post("/resend").send({
+      email: "jdoe@email.com",
+    });
+
+    const res = await request(app).post("/resend").send({
+      email: "jdoe@email.com",
+    });
+    expect(res.status).toBe(200);
+    expect("message" in res.body).toEqual(true);
+    expect(res.body.message).toEqual("Verification email sent successfully!");
+  });
+});
+
 describe("Test verify user endpoint", () => {
+  test("Verify User - Invalid Token", async () => {
+    const res = await request(app).get("/verify").query({
+      token: "0b8418328120f35df6e1d8946347cf0f429dde1bf70e8f2c59eb370160a77c4c",
+    });
+    expect(res.status).toBe(404);
+    expect("error" in res.body).toEqual(true);
+    expect(res.body.error).toEqual("Invalid Token");
+  });
+
   test("Verify User", async () => {
     const user = await User.findOne({ email: "jdoe@email.com" });
     const activation = await Activation.findOne({ user: user!._id });
@@ -73,14 +141,16 @@ describe("Test verify user endpoint", () => {
     expect("message" in res.body).toEqual(true);
     expect(res.body.message).toEqual("Email verified successfully!");
   });
+});
 
-  test("Verify User - Invalid Token", async () => {
-    const res = await request(app).get("/verify").query({
-      token: "0b8418328120f35df6e1d8946347cf0f429dde1bf70e8f2c59eb370160a77c4c",
+describe("Test resend activation email", () => {
+  test("Resend Activation Email - (Email already verified)", async () => {
+    const res = await request(app).post("/resend").send({
+      email: "jdoe@email.com",
     });
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(401);
     expect("error" in res.body).toEqual(true);
-    expect(res.body.error).toEqual("Invalid Token");
+    expect(res.body.error).toEqual("Email Already Verified");
   });
 });
 
@@ -141,7 +211,27 @@ describe("Test logout", () => {
     expect(res.body.error).toEqual("Token is not valid");
   });
 
-  test("Logout - Should Pass", async () => {
+  test("Logout - (valid token - invalid email)", async () => {
+    const loginRes = await request(app).post("/login").send({
+      email: "jdoe@email.com",
+      password: "password",
+    });
+
+    const res = await request(app)
+      .delete("/logout")
+      .send({
+        email: "jdoe2@email.com",
+      })
+      .set({
+        "x-auth-token": loginRes.body.accessToken,
+      });
+
+    expect(res.status).toBe(404);
+    expect("error" in res.body).toEqual(true);
+    expect(res.body.error).toEqual("User Not Found");
+  });
+
+  test("Logout - (valid token)", async () => {
     const loginRes = await request(app).post("/login").send({
       email: "jdoe@email.com",
       password: "password",
@@ -203,7 +293,6 @@ describe("Test refresh token", () => {
   });
 });
 
-// TODO: Test resend verification email
 // TODO: Test reset password
 
 afterAll(async () => {
@@ -211,5 +300,5 @@ afterAll(async () => {
   const user = await User.findOne({ email: "jdoe@email.com" });
   await RefreshToken.deleteOne({ user: user!._id });
   await Activation.deleteOne({ user: user!._id });
-  await user?.deleteOne();
+  await user!.deleteOne();
 }, 1000);
