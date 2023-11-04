@@ -31,11 +31,11 @@ export class BibleController {
     const translation = req.body.translation;
 
     for (const index in books) {
-      const chapters = books[index].chapters;
       const bookObj = new Book({
         name: books[index].name,
         translation: translation,
-        chapters: chapters,
+        number: books[index].number,
+        chapters: books[index].chapters,
       });
       await bookObj.save();
     }

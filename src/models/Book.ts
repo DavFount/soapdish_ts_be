@@ -10,12 +10,14 @@ const connection = createConnection(config.database.connectionUri, connectionOpt
 interface IBook {
   name: string;
   translation: string;
+  number: Number;
   chapters: Array<Array<string>>;
 }
 
 const BookSchema = new Schema({
   name: { type: String, required: true },
   translation: { type: String, required: true },
+  number: { type: Number, required: true },
   chapters: [[{ type: String }]],
 });
 

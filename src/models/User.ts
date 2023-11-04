@@ -22,6 +22,7 @@ export interface IUser {
     phone?: string;
     language: string;
     translation?: string;
+    avatar?: string;
   };
   socials: {
     facebook?: string;
@@ -54,6 +55,7 @@ const UserSchema = new Schema<IUser, UserModel, IUserMethods>(
       phone: { type: String, required: false, set: justNumericCharacters },
       language: { type: String, required: false, default: "en" },
       translation: { type: String, required: false, default: "NIV" },
+      avatar: { type: String, required: false },
     },
     socials: {
       facebook: { type: String, required: false },
