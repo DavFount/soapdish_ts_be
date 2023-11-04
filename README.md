@@ -43,7 +43,6 @@
         <li><a href="#prerequisites">Prerequisites</a></li>
       </ul>
     </li>
-    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -120,16 +119,29 @@ Download the Code and navigate to the folder and execute one of the below comman
 The main feature of this application is the ability to dive deeper into God's word. Below is a list of core features
 that aim to be your go to tools for studying the bible.
 
-- Ability to create many groups and keep your group activities within that group.
-- Add items to your personal prayer list, so you never forget to pray for anyone again!
-- Anonymous prayer requests
-  - Make public for all or keep within your group.
-- Read, Highlight, Save Bible verses directly in the application.
-- Set your preferred translation of the Bible in your profile.
-- Quickly switch between translations on the Bible page!
-- Create SOAP studies and share them with your team/group
-
-More to come later
+- Team Management
+  - Create as many teams as you'd like
+  - Invite new and existing users to the team
+  - Live team text chat (Future Release)
+  - Team message board (Future Release)
+  - Live Bible Study (Future Release, Idea by Christopher @ CrossFam)
+    - Follow along with your preferred translation
+    - Personal notes
+    - Group discussion questions
+- Bible Studies
+  - Individual Bible studies
+  - Share Bible studies to your teams
+- Bible Reading
+  - Limited translations (due to copyrights, trying to figure out how to get more translations loaded in various languages)
+  - Underline/Highlight (travels with you between different translations)
+  - Select a Book, Chapter, Verse to display it in various translations
+- Prayer Requests
+  - Share Publically and/or within your teams
+- Prayer List
+  - Add/Remove items from your prayer list and never forget to pray for someone again!
+- User Profiles
+  - Add your social media accounts to display links on your profile page
+  - Optionally display your location, bio, career, hobbies/interests and your testimony
 
 See the [open issues](https://github.com/DavFount/soapdish_ts_be/issues) to suggest features.
 
@@ -186,6 +198,7 @@ Projects:
 <!-- - [Choose an Open Source License](https://choosealicense.com) -->
 
 - [Bytesizd](https://github.com/AndrewR3K) - Thanks for the LOGOS!!!!
+- Christopher@CrossFam - For the idea of live group Bible studies
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
