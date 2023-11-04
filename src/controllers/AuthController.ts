@@ -10,7 +10,6 @@ import SHA256 from "crypto-js/sha256";
 import { MailDataRequired } from "@sendgrid/mail";
 import { SoapError } from "#utils/errors.util";
 
-// TODO: Add tests for all methods
 // TODO: Add method to reset password
 export class AuthController {
   login = async (req: Request, res: Response) => {
@@ -35,7 +34,6 @@ export class AuthController {
         });
       }
 
-      // User Exists but Password is Invalid
       const validPassword: boolean = user!.validPassword(password);
       if (!validPassword) {
         throw new SoapError({

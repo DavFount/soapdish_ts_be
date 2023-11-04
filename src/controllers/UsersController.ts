@@ -46,6 +46,7 @@ export class UsersController {
         details: {
           firstName: req.body.details.firstName,
           lastName: req.body.details.lastName,
+          emailVerified: true,
         },
       });
       await user.save();

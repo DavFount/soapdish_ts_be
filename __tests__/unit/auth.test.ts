@@ -5,6 +5,8 @@ import { User } from "#models/User";
 import { Activation } from "#models/Activation";
 import { RefreshToken } from "#models/RefreshToken";
 
+// TODO: Research proper error status codes
+
 describe("Test Registration", () => {
   test("Register user without required information", async () => {
     const res = await request(app)

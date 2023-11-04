@@ -11,7 +11,7 @@ authRoutes.delete("/logout", verifyToken, authController.logout); // Test Comple
 
 authRoutes.post("/register", authController.register); // Test Complete
 
-authRoutes.post("/resend", authController.resendVerificationEmail);
+authRoutes.post("/resend", authController.resendVerificationEmail); // Test Complete
 
 authRoutes.get("/verify", authController.verify); // Test Complete
 

@@ -1,8 +1,6 @@
 import { createConnection, ConnectOptions, Schema } from "mongoose";
 import { config } from "#configs/index";
 import { IUser } from "#models/User";
-import { v4 as uuidv4 } from "uuid";
-import SHA256 from "crypto-js/sha256";
 
 const connectionOptions: ConnectOptions = {
   bufferCommands: false,
