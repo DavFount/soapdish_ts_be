@@ -1,8 +1,8 @@
 import express from "express";
-import { defaultRoute } from "./v1/defaultRoute";
-import { userRoutes } from "./v1/userRoutes";
-import { authRoutes } from "./v1/authRoutes";
-import { bibleRoutes } from "./v1/bibleRoutes";
+import { defaultRoute } from "./defaultRoute";
+import { userRoutes } from "./userRoutes";
+import { authRoutes } from "./authRoutes";
+import { bibleRoutes } from "./bibleRoutes";
 
 export const routes = express.Router();
 
