@@ -1,8 +1,8 @@
 import express, { Application } from "express";
-import { routes } from "./routes/v1/index";
+import { v1routes } from "./routes/v1/index";
 
 const app: Application = express();
 
-app.use("/api/v1/", routes);
+app.use("/api/v1/", v1routes);
 
 export default app;
