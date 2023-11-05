@@ -11,7 +11,9 @@ type ErrorName =
   | "TOKEN_EXPIRED"
   | "TOKEN_INVALID"
   | "REFRESH_TOKEN_INVALID"
-  | "REFRESH_TOKEN_EXPIRED";
+  | "REFRESH_TOKEN_EXPIRED"
+  | "NOT_AUTHORIZED"
+  | "TEAM_NOT_FOUND";
 
 export class SoapError extends Error {
   name: ErrorName;

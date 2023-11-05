@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Request as JWTRequest } from "express-jwt";
 import { User, IUser } from "#models/User";
 import { Activation } from "#models/Activation";
 import { RefreshToken } from "#models/RefreshToken";
@@ -64,7 +65,7 @@ export class AuthController {
     }
   };
 
-  logout = async (req: Request, res: Response) => {
+  logout = async (req: JWTRequest, res: Response) => {
     try {
       const user: Document<IUser> | null = await User.findOne({ email: req.body.email });
 
@@ -114,7 +115,7 @@ export class AuthController {
           c2a_link: url,
           c2a_button: "Verify Email",
         },
-        templateId: "d-593ccf0a20d74091a82931fe31689c3a",
+        templateId: config.sendgrid.newUserTemplate,
       };
       SendMail(msg);
 

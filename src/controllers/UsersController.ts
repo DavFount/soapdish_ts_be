@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import { Request as JWTRequest } from "express-jwt";
 import { User } from "#models/User";
 
 export class UsersController {
-  getUsers = async (req: Request, res: Response) => {
+  getUsers = async (req: JWTRequest, res: Response) => {
     const nPerPage: number = typeof req.query.perPage !== "undefined" ? Number(req.query.perPage) : 5;
     const lastId = req.query.lastId;
 
@@ -18,7 +19,7 @@ export class UsersController {
     return res.json(users);
   };
 
-  getUser = async (req: Request, res: Response) => {
+  getUser = async (req: JWTRequest, res: Response) => {
     try {
       const user = await User.find({ _id: req.params.id }, { password: 0, __v: 0 });
       return res.json(user);
@@ -31,7 +32,7 @@ export class UsersController {
     }
   };
 
-  createUser = async (req: Request, res: Response) => {
+  createUser = async (req: JWTRequest, res: Response) => {
     const userValidation = User.createValidator(req.body);
     if (userValidation.fails()) {
       return res.status(400).json({
@@ -62,7 +63,7 @@ export class UsersController {
     }
   };
 
-  updateUser = async (req: Request, res: Response) => {
+  updateUser = async (req: JWTRequest, res: Response) => {
     try {
       const user = await User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, runValidators: true });
       return res.status(201).json(user);
@@ -82,7 +83,7 @@ export class UsersController {
     }
   };
 
-  deleteUser = async (req: Request, res: Response) => {
+  deleteUser = async (req: JWTRequest, res: Response) => {
     try {
       await User.deleteOne({ _id: req.params.id });
       return res.status(204).json();

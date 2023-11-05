@@ -3,6 +3,7 @@ declare global {
     interface ProcessEnv {
       PORT: string;
       JWT_SECRET: string;
+      JWT_ISSUER: string;
       JWT_REFRESH_SECRET: string;
       JWT_ACCESS_TOKEN_EXPIRY: string;
       JWT_REFRESH_TOKEN_EXPIRY: string;
@@ -16,6 +17,10 @@ declare global {
       EMAIL_HOST_PASSWORD: string;
       EMAIL_USE_TLS: string;
       SENDGRID_API_KEY: string;
+      SENDGRID_NEW_USER_TEMPLATE: string;
+      SENDGIRD_TEAM_INVITE_NEW_USER_TEMPLATE: string;
+      SENDGRID_TEAM_INVITE_EXISTING_USER_TEMPLATE: string;
+      SENDGRID_PASSWORD_RESET_TEMPLATE: string;
     }
   }
 }

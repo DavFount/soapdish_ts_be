@@ -1,4 +1,4 @@
-import { createConnection, ConnectOptions, Model, Schema } from "mongoose";
+import { createConnection, ConnectOptions, Model, Schema, Types } from "mongoose";
 import { ITeam } from "#models/Team";
 import bcrypt from "bcrypt";
 import { toLower } from "lodash";
@@ -13,12 +13,22 @@ const connectionOptions: ConnectOptions = {
 
 const connection = createConnection(config.database.connectionUri, connectionOptions);
 
+interface ITeamInvites {
+  team: Types.ObjectId;
+  token: string;
+}
+
 export interface IUser {
   email: string;
   password: string;
+  role: string;
   details: {
     firstName: string;
     lastName: string;
+    biography?: string;
+    jobTitle?: string;
+    testimonial?: string;
+    location?: string;
     phone?: string;
     language: string;
     translation?: string;
@@ -28,11 +38,14 @@ export interface IUser {
     facebook?: string;
     twitter?: string;
     instagram?: string;
+    tiktok?: string;
     linkedin?: string;
   };
   prayers?: Array<string>;
-  teams: Array<ITeam>;
+  teams: Array<Types.ObjectId>;
+  teamInvites: Array<ITeamInvites>;
   emailVerified?: boolean;
+  passwordChangeRequired?: boolean;
 }
 
 interface IUserMethods {
@@ -49,9 +62,14 @@ const UserSchema = new Schema<IUser, UserModel, IUserMethods>(
   {
     email: { type: String, trim: true, index: { unique: true }, required: true, get: toLower, set: toLower },
     password: { type: String, required: true, trim: true },
+    role: { type: String, required: true, enum: ["user", "admin"], default: "user" },
     details: {
       firstName: { type: String, required: true },
       lastName: { type: String, required: true },
+      biography: { type: String, required: false },
+      jobTitle: { type: String, required: false },
+      testimonial: { type: String, required: false },
+      location: { type: String, required: false },
       phone: { type: String, required: false, set: justNumericCharacters },
       language: { type: String, required: false, default: "en" },
       translation: { type: String, required: false, default: "NIV" },
@@ -61,11 +79,19 @@ const UserSchema = new Schema<IUser, UserModel, IUserMethods>(
       facebook: { type: String, required: false },
       twitter: { type: String, required: false },
       instagram: { type: String, required: false },
+      tiktok: { type: String, required: false },
       linkedin: { type: String, required: false },
     },
     prayers: [{ type: String, required: false }],
-    teams: [{ type: Schema.Types.ObjectId, ref: "Team" }],
+    teams: [{ type: Types.ObjectId, ref: "Team" }],
+    teamInvites: [
+      {
+        team: { type: Types.ObjectId, ref: "Team" },
+        token: { type: String, required: true },
+      },
+    ],
     emailVerified: { type: Boolean, required: false, default: false },
+    passwordChangeRequired: { type: Boolean, required: false, default: false },
   },
   { timestamps: true }
 );
@@ -90,7 +116,11 @@ UserSchema.methods.validPassword = function (password: string) {
 };
 
 UserSchema.method("generateAccessToken", function () {
-  return jwt.sign({ id: this._id }, config.jwt.secret, { expiresIn: config.jwt.accessTokenExpiry });
+  return jwt.sign({ id: this._id, role: this.role }, config.jwt.secret, {
+    expiresIn: config.jwt.accessTokenExpiry,
+    algorithm: "HS256",
+    issuer: config.jwt.issuer,
+  });
 });
 
 export const User = connection.model<IUser, UserModel>("User", UserSchema);
