@@ -65,7 +65,32 @@ export class UsersController {
 
   updateUser = async (req: JWTRequest, res: Response) => {
     try {
-      const user = await User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, runValidators: true });
+      const user = await User.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+          email: req.body.email,
+          details: {
+            firstName: req.body.details.firstName,
+            lastName: req.body.details.lastName,
+            biography: req.body.details.biography,
+            jobTitle: req.body.details.jobTitle,
+            testimonial: req.body.details.testimonial,
+            location: req.body.details.location,
+            phone: req.body.details.phone,
+            language: req.body.details.language,
+            translation: req.body.details.translation,
+            avatar: req.body.details.avatar,
+          },
+          socials: {
+            facebook: req.body.socials.facebook,
+            twitter: req.body.socials.twitter,
+            instagram: req.body.socials.instagram,
+            tiktok: req.body.socials.tiktok,
+            linkedin: req.body.socials.linkedin,
+          },
+        },
+        { new: true, runValidators: true }
+      );
       return res.status(201).json(user);
     } catch (err: any) {
       if (err.code == 11000) {
