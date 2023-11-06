@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2016",
     "module": "commonjs",
-    "baseUrl": "./dist",
+    "baseUrl": "./",
     "paths": {
       "#configs/*": ["src/configs/*"],
       "#models/*": ["src/models/*"],
