@@ -41,7 +41,7 @@
   },
   "scripts": {
     "build": "npx tsc",
-    "start": "node dist/src/index.js",
+    "start": "node -r tsconfig-paths/register -r ts-node/register dist/src/index.js",
     "dev": "nodemon",
     "test": "jest --coverage --setupFiles dotenv/config --forceExit"
   },
