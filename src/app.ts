@@ -9,6 +9,6 @@ app.use("/v1/", v1routes);
 const options: cors.CorsOptions = {
   origin: "*",
 };
-app.use(cors());
+app.use(cors(options));
 
 export default app;
