@@ -161,6 +161,7 @@ export class AuthController {
       await activation!.deleteOne();
       return res.status(200).json({
         message: "Email verified successfully!",
+        user: user,
       });
     } catch (err) {
       if (err instanceof SoapError) {
@@ -248,6 +249,10 @@ export class AuthController {
         return res.status(err.status).json({ error: err.message });
       }
     }
+  };
+
+  resetPassword = (req: Request, res: Response) => {
+    return res.status(200).json("ok");
   };
 
   _createActivationToken = async (user: Types.ObjectId) => {
