@@ -5,7 +5,7 @@ import cors from "cors";
 const app: Application = express();
 
 app.use("/v1/", v1routes);
-const allowedOrigins = ["*"];
+const allowedOrigins = ["https://thesoapdish.test:5173"];
 const options: cors.CorsOptions = {
   origin: allowedOrigins,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
