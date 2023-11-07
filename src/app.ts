@@ -4,12 +4,12 @@ import cors from "cors";
 
 const app: Application = express();
 
-const allowedOrigins = ["*"];
+const allowedOrigins = ["http://thesoapdish.test:5173", "https://thesoapdish.app", "http://thesoapdish.app"];
 const options: cors.CorsOptions = {
   origin: allowedOrigins,
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
   preflightContinue: false,
-  exposedHeaders: ["Access-Control-Allow-Origin"],
+  credentials: true,
 };
 
 app.use(cors(options));
