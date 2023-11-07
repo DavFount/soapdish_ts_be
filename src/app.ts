@@ -4,14 +4,15 @@ import cors from "cors";
 
 const app: Application = express();
 
-app.use("/v1/", v1routes);
 const allowedOrigins = ["*"];
 const options: cors.CorsOptions = {
   origin: allowedOrigins,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  preflightContinue: true,
+  preflightContinue: false,
+  exposedHeaders: ["Access-Control-Allow-Origin"],
 };
 
 app.use(cors(options));
+app.use("/v1/", v1routes);
 
 export default app;
