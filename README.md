@@ -147,6 +147,20 @@ See the [open issues](https://github.com/DavFount/soapdish_ts_be/issues) to sugg
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Roadmap
+
+This section will essentially outline each feature and where it is in development.
+
+| Feature            | Status         | Notes                                                                               |
+| ------------------ | -------------- | ----------------------------------------------------------------------------------- |
+| Team Management    | In-Development | Completed: Create Teams, Invite Members                                             |
+| Bible Studies      | Planned        |                                                                                     |
+| Live Bible Studies | Planned        | Idea provided by Christopher @ Cross Fam. Will be added after app is complete.      |
+| Bible Reading      | In-Development | Completed: Data Model, Upload Bible, Retrieve Full Books                            |
+| Prayer Requests    | Planned        |                                                                                     |
+| Prayer List        | In-Development | Completed: Field Exists - Possibly break into a sub document for better performance |
+| User Profiles      | Completed      | Full Bio's, Social Links, and Testimony support                                     |
+
 <!-- CONTRIBUTING -->
 
 ## Contributing
