@@ -5,10 +5,15 @@ export const config = {
   },
   jwt: {
     issuer: process.env.JWT_ISSUER!,
-    secret: process.env.JWT_SECRET!,
+    access_secret: process.env.JWT_SECRET_ACCESS!,
+    refresh_secret: process.env.JWT_SECRET_REFRESH!,
+    verification_secret: process.env.JWT_SECRET_VERIFICATION!,
+    password_reset_secret: process.env.JWT_SECRET_PASSWORD_RESET!,
     refreshSecret: process.env.JWT_REFRESH_SECRET!,
     accessTokenExpiry: process.env.JWT_ACCESS_TOKEN_EXPIRY!,
     refreshTokenExpiry: process.env.JWT_REFRESH_TOKEN_EXPIRY!,
+    verificationTokenExpiry: process.env.JWT_VERIFICATION_TOKEN_EXPIRY!,
+    passwordResetTokenExpiry: process.env.JWT_PASSWORD_RESET_TOKEN_EXPIRY!,
   },
   database: {
     connectionUri: process.env.CONNECTION_URI!,

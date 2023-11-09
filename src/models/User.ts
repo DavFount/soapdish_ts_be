@@ -1,5 +1,4 @@
 import { createConnection, ConnectOptions, Model, Schema, Types } from "mongoose";
-import { ITeam } from "#models/Team";
 import bcrypt from "bcrypt";
 import { toLower } from "lodash";
 import { justNumericCharacters } from "#utils/db.util";
@@ -46,12 +45,14 @@ export interface IUser {
   teamInvites: Array<ITeamInvites>;
   emailVerified?: boolean;
   passwordChangeRequired?: boolean;
+  resetPasswordToken?: string;
 }
 
 interface IUserMethods {
   validPassword(password: string): boolean;
   generateRefreshToken(): string;
   generateAccessToken(): string;
+  generatePasswordResetToken(): string;
 }
 interface UserModel extends Model<IUser, {}, IUserMethods> {
   generateHash(password: string): string;
@@ -92,6 +93,7 @@ const UserSchema = new Schema<IUser, UserModel, IUserMethods>(
     ],
     emailVerified: { type: Boolean, required: false, default: false },
     passwordChangeRequired: { type: Boolean, required: false, default: false },
+    resetPasswordToken: { type: String, required: false },
   },
   { timestamps: true }
 );
@@ -116,8 +118,24 @@ UserSchema.methods.validPassword = function (password: string) {
 };
 
 UserSchema.method("generateAccessToken", function () {
-  return jwt.sign({ id: this._id, role: this.role }, config.jwt.secret, {
+  return jwt.sign({ id: this._id, role: this.role }, config.jwt.access_secret, {
     expiresIn: config.jwt.accessTokenExpiry,
+    algorithm: "HS256",
+    issuer: config.jwt.issuer,
+  });
+});
+
+UserSchema.method("generateRefreshToken", function () {
+  return jwt.sign({ id: this._id, role: this.role }, config.jwt.refresh_secret, {
+    expiresIn: config.jwt.refreshTokenExpiry,
+    algorithm: "HS256",
+    issuer: config.jwt.issuer,
+  });
+});
+
+UserSchema.method("generatePasswordResetToken", function () {
+  return jwt.sign({ id: this._id }, config.jwt.password_reset_secret, {
+    expiresIn: config.jwt.passwordResetTokenExpiry,
     algorithm: "HS256",
     issuer: config.jwt.issuer,
   });

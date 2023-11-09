@@ -25,6 +25,7 @@ const RefreshTokenSchema = new Schema<IRefreshToken>({
   expiresAt: { type: Date, required: true },
 });
 
+// TODO: Convert to use JWT
 RefreshTokenSchema.statics.generateRefreshToken = function () {
   const uuid = uuidv4();
   return SHA256(uuid);

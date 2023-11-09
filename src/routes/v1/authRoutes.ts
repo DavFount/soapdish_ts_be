@@ -17,6 +17,6 @@ authRoutes.get("/verify", authController.verify);
 
 authRoutes.post("/refresh", authController.refresh);
 
-authRoutes.post("/reset", authController.resetPassword);
+authRoutes.post("/forgot", authController.forgotPassword);
 
-// TODO: Add endpoint to reset password
+authRoutes.post("/reset", authController.resetPassword);
